@@ -1,6 +1,8 @@
 package com.example.ran0033.tetris;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -19,15 +21,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-/**
- * Created by kru13 on 12.10.16.
- */
 public class Tetris extends View{
 
     Context context;
-
-    Bitmap[] bmp;
-
     int lx = 16;
     int ly = 10;
 
@@ -38,14 +34,81 @@ public class Tetris extends View{
     public int matrix[][] = new int[lx][ly];
 
     private Timer timer;
-    private boolean t;
     private Falling falling;
 
     private Point touchStart;
 
-    private boolean up, down, right, left;
+    private boolean up, down, right, left, pause;
+    private int score, level, div, pauseTap;
 
-    private int score, level, div;
+    private TimerTask tetrisTask = new TimerTask() {
+        @Override
+        public void run() {
+            if(!down && div++ < 10 || pause){
+                return;
+            }
+
+            boolean scor = false;
+            int lines = 0;
+            for(int i = 0; i < lx; i++){
+                boolean filled = true;
+                for(int j = 0; j < ly; j++){
+                    filled = matrix[i][j] == 0 ? false : filled;
+                }
+                if(filled && !falling.CanMove()){
+                    matrix[i] = new int[ly];
+                    lines++;
+                    for(int ii = i; ii > 0; ii--){
+                        for(int jj = 0; jj < ly; jj++){
+                            matrix[ii][jj] = matrix[ii - 1][jj];
+                        }
+                    }
+                    scor = true;
+                }
+            }
+            if(!scor) {
+                if(up){
+                    falling.Rotate();
+                    up = false;
+                }
+
+                if(left){
+                    falling.moveLeft();
+                    left = false;
+                }
+
+                if(right){
+                    falling.moveRight();
+                    right = false;
+                }
+
+                int state = falling.Fall();
+
+                if(state == 1){
+                    /*for(int i = 0; i < lx; i++){
+                        for(int j = 0; j < ly; j++){
+                            matrix[i][j] = 0;
+                        }
+                    }*/
+                    pause = true;
+                    MenuActivity.gameOver.putExtra("level", level);
+                    MenuActivity.gameOver.putExtra("score", score);
+                    context.startActivity(MenuActivity.gameOver);
+                } else if (state == 2) {
+                    down = false;
+                }
+            }else{
+                score += lines == 1 ? 40 * level + 40 : 0;
+                score += lines == 2 ? 100 * level + 100 : 0;
+                score += lines == 3 ? 300 * level + 300 : 0;
+                score += lines == 4 ? 1200 * level + 1200 : 0;
+                level++;
+                myHandler.post(updateText);
+            }
+            postInvalidate();
+            div = 0;
+        }
+    };
 
     public Tetris(Context context) {
         super(context);
@@ -73,85 +136,34 @@ public class Tetris extends View{
 
     void init(final Context context) {
         this.context = context;
-        bmp = new Bitmap[6];
-        bmp[0] = BitmapFactory.decodeResource(getResources(), R.drawable.empty);
-        bmp[1] = BitmapFactory.decodeResource(getResources(), R.drawable.wall);
-        bmp[2] = BitmapFactory.decodeResource(getResources(), R.drawable.box);
-        bmp[3] = BitmapFactory.decodeResource(getResources(), R.drawable.goal);
-        bmp[4] = BitmapFactory.decodeResource(getResources(), R.drawable.hero);
-        bmp[5] = BitmapFactory.decodeResource(getResources(), R.drawable.boxok);
-
         falling = new Falling(matrix);
-
         timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                if(!down && div++ < 10){
-                    return;
-                }
-                t = true;
-                boolean scor = false;
-                int lines = 0;
-                for(int i = 0; i < lx; i++){
-                    boolean filled = true;
-                    for(int j = 0; j < ly; j++){
-                        filled = matrix[i][j] == 0 ? false : filled;
-                    }
-                    if(filled && !falling.CanMove()){
-                        matrix[i] = new int[ly];
-                        lines++;
-                        for(int ii = i; ii > 0; ii--){
-                            for(int jj = 0; jj < ly; jj++){
-                                matrix[ii][jj] = matrix[ii - 1][jj];
-                            }
-                        }
-                        scor = true;
-                    }
-                }
-                if(!scor) {
-                    if(up){
-                        falling.Rotate();
-                        up = false;
-                    }
+        timer.scheduleAtFixedRate(tetrisTask, 0, 50);
+    }
 
-                    if(left){
-                        falling.moveLeft();
-                        left = false;
+    public void resume(){
+        pause = false;
+    }
+
+    public void pause(){
+        pause = true;
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("PAUSE")
+                .setCancelable(false)
+                .setPositiveButton("Resume", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        resume();
                     }
-
-                    if(right){
-                        falling.moveRight();
-                        right = false;
+                })
+                .setNeutralButton("Back to menu", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        context.startActivity(MenuActivity.menu);
                     }
-
-                    int state = falling.Fall();
-
-                    if(state == 1){
-                        for(int i = 0; i < lx; i++){
-                            for(int j = 0; j < ly; j++){
-                                matrix[i][j] = 0;
-                            }
-                        }
-                    } else if (state == 2) {
-                        down = false;
-                    }
-                }else{
-                    score += lines == 1 ? 40 * level + 40 : 0;
-                    score += lines == 2 ? 100 * level + 100 : 0;
-                    score += lines == 3 ? 300 * level + 300 : 0;
-                    score += lines == 4 ? 1200 * level + 1200 : 0;
-                    level++;
-                    myHandler.post(updateText);
-                }
-                //invalidate();
-                postInvalidate();
-                t = false;
-                div = 0;
-            }
-        }, 0, 50);
-
-
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     @Override
@@ -166,8 +178,6 @@ public class Tetris extends View{
         for (int i = 0; i < lx; i++) {
             for (int j = 0; j < ly; j++) {
                 int color = matrix[i][j];
-                //level[i*10 + j]
-                //canvas.drawBitmap(bmp[1], null, new Rect(j*width, i*height,(j+1)*width, (i+1)*height), null);
                 Paint myPaint = new Paint();
                 Rect r = new Rect(j*width, i*height,(j+1)*width, (i+1)*height);
                 // fill
@@ -229,21 +239,36 @@ public class Tetris extends View{
                 }
 
                 switch(dir){
+                    case -1:
+                        pauseTap++;
+                        if(pauseTap == 3){
+                            if(pause){
+                                resume();
+                            }else{
+                                pause();
+                            }
+                            pauseTap = 0;
+                        }
+                        break;
                     case 0:
                         Log.d("dir", "up");
                         up = true;
+                        pauseTap = 0;
                         break;
                     case 1:
                         Log.d("dir", "down");
                         down = true;
+                        pauseTap = 0;
                         break;
                     case 2:
                         Log.d("dir", "right");
                         right = true;
+                        pauseTap = 0;
                         break;
                     case 3:
                         Log.d("dir", "left");
                         left = true;
+                        pauseTap = 0;
                         break;
                 }
 

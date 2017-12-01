@@ -8,6 +8,7 @@ import android.widget.TextView;
 public class MainActivity extends Activity {
 
     private TextView tScore, tLevel;
+    private Tetris tetris;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,6 +17,7 @@ public class MainActivity extends Activity {
 
         tScore = findViewById(R.id.score);
         tLevel = findViewById(R.id.level);
+        tetris = findViewById(R.id.tetris);
 
         setScore(0);
         setLevel(0);
@@ -29,34 +31,14 @@ public class MainActivity extends Activity {
         this.tLevel.setText(Integer.toString(level));
     }
 
+    @Override
+    public void onBackPressed(){
+        tetris.pause();
+    }
 
-   /* @Override
-    public boolean onTouchEvent(MotionEvent event) {
-
-        int X = (int) event.getX();
-        int Y = (int) event.getY();
-        int eventaction = event.getAction();
-
-        switch (eventaction) {
-            case MotionEvent.ACTION_DOWN:
-                if(!isTouch)
-                {
-                    for (int i=0; i<game.level.length; i++)
-                    {
-                        if(game.level[i] == 4)
-                        {
-                            game.level[i] = game.level[i+1];
-                            game.level[i+1] = 4;
-                            game.draw(canvas);
-                            break;
-                        }
-                    }
-                }
-                isTouch = true;
-                break;
-            case MotionEvent.ACTION_UP:
-                isTouch = false;
-        }
-        return true;
-    }*/
+    @Override
+    public void onPause(){
+        super.onPause();
+        tetris.pause();
+    }
 }

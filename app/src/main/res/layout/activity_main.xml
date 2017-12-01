@@ -42,6 +42,7 @@
     </LinearLayout>
 
     <com.example.ran0033.tetris.Tetris
+        android:id="@+id/tetris"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

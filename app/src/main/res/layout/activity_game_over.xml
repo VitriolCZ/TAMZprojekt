@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.ran0033.tetris.GameOverActivity">
+
+    <LinearLayout
+        android:layout_width="356dp"
+        android:layout_height="496dp"
+        android:orientation="vertical"
+        tools:layout_editor_absoluteY="7dp"
+        android:layout_marginRight="8dp"
+        app:layout_constraintRight_toRightOf="parent"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="parent">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="126dp"
+            android:gravity="center"
+            android:text="Game Over!"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display2" />
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="241dp">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView4"
+                    android:layout_width="183dp"
+                    android:layout_height="87dp"
+                    android:gravity="center"
+                    android:text="Level:"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
+                <TextView
+                    android:id="@+id/textLevel"
+                    android:layout_width="183dp"
+                    android:layout_height="87dp"
+                    android:gravity="center"
+                    android:text="0"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <TextView
+                    android:id="@+id/textView6"
+                    android:layout_width="183dp"
+                    android:layout_height="87dp"
+                    android:gravity="center"
+                    android:text="Score:"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body2" />
+
+                <TextView
+                    android:id="@+id/textScore"
+                    android:layout_width="183dp"
+                    android:layout_height="87dp"
+                    android:gravity="center"
+                    android:text="0"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+            </TableRow>
+
+        </TableLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnMenu"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="goMenuOnClick"
+                android:text="Back to menu" />
+
+            <Button
+                android:id="@+id/btnStats"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="goStatsOnClick"
+                android:text="View Stats" />
+        </LinearLayout>
+
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>
