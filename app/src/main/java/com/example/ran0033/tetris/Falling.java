@@ -28,7 +28,8 @@ public class Falling {
                 new Point(1, 1),
                 new Point(0, 0),
                 new Point(0, 1),
-                -1
+                -1,
+                4
         );
 
         shapes[1] = new Shape(
@@ -36,7 +37,8 @@ public class Falling {
                 new Point(0, 1),
                 new Point(0, 2),
                 new Point(0, 3),
-                4
+                4,
+                2
         );
 
         shapes[2] = new Shape(
@@ -44,7 +46,8 @@ public class Falling {
                 new Point(0, 1),
                 new Point(1, 1),
                 new Point(2, 1),
-                3
+                3,
+                4
         );
 
         shapes[3] = new Shape(
@@ -52,7 +55,8 @@ public class Falling {
                 new Point(1, 0),
                 new Point(1, 1),
                 new Point(1, 2),
-                3
+                3,
+                4
         );
 
         shapes[4] = new Shape(
@@ -60,7 +64,8 @@ public class Falling {
                 new Point(1, 1),
                 new Point(1, 2),
                 new Point(0, 2),
-                3
+                3,
+                4
         );
 
         shapes[5] = new Shape(
@@ -68,7 +73,8 @@ public class Falling {
                 new Point(1, 1),
                 new Point(0, 1),
                 new Point(0, 2),
-                3
+                3,
+                4
         );
 
         shapes[5] = new Shape(
@@ -76,7 +82,8 @@ public class Falling {
                 new Point(0, 1),
                 new Point(1, 1),
                 new Point(1, 2),
-                3
+                3,
+                4
         );
         generateNext();
         shape = nextShape;
@@ -86,16 +93,22 @@ public class Falling {
 
     private void generateNext(){
         Random r = new Random();
-        //nextShape = shapes[r.nextInt(6)];
-        nextShape = shapes[0];
+        nextShape = shapes[r.nextInt(6)];
+        //nextShape = shapes[0];
         nextShape.generateColor();
     }
 
-    public boolean Fall(){
+    public int Fall(){
+        int ret = 0;
         if(shape == null){
+            ret = 2;
             shape = nextShape;
+            pos.x = -1;
+            pos.y = shape.GetStartY();
+            oldPos = new Point(pos.x, pos.y);
+
             if(!canMove(new Point(pos.x + 1, pos.y), shape)){
-                return true;
+                return 1;
             }
             generateNext();
         }
@@ -116,14 +129,12 @@ public class Falling {
         draw(pos, pts, shape);
 
         if(!canMove){
-            pos.x = 0;
-            pos.y = 2;
             shape = null;
         }
 
         oldPos = new Point(pos.x, pos.y);
 
-        return false;
+        return ret;
     }
 
     public void Rotate(){

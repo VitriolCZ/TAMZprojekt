@@ -7,10 +7,13 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.*;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.TextView;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -20,6 +23,8 @@ import java.util.TimerTask;
  * Created by kru13 on 12.10.16.
  */
 public class Tetris extends View{
+
+    Context context;
 
     Bitmap[] bmp;
 
@@ -40,8 +45,7 @@ public class Tetris extends View{
 
     private boolean up, down, right, left;
 
-
-    private int score, level;
+    private int score, level, div;
 
     public Tetris(Context context) {
         super(context);
@@ -58,7 +62,17 @@ public class Tetris extends View{
         init(context);
     }
 
+    final Handler myHandler = new Handler();
+    final Runnable updateText = new Runnable() {
+        public void run() {
+            MainActivity ma = (MainActivity)context;
+            ma.setLevel(level);
+            ma.setScore(score);
+        }
+    };
+
     void init(final Context context) {
+        this.context = context;
         bmp = new Bitmap[6];
         bmp[0] = BitmapFactory.decodeResource(getResources(), R.drawable.empty);
         bmp[1] = BitmapFactory.decodeResource(getResources(), R.drawable.wall);
@@ -73,8 +87,12 @@ public class Tetris extends View{
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
+                if(!down && div++ < 10){
+                    return;
+                }
                 t = true;
                 boolean scor = false;
+                int lines = 0;
                 for(int i = 0; i < lx; i++){
                     boolean filled = true;
                     for(int j = 0; j < ly; j++){
@@ -82,6 +100,7 @@ public class Tetris extends View{
                     }
                     if(filled && !falling.CanMove()){
                         matrix[i] = new int[ly];
+                        lines++;
                         for(int ii = i; ii > 0; ii--){
                             for(int jj = 0; jj < ly; jj++){
                                 matrix[ii][jj] = matrix[ii - 1][jj];
@@ -106,24 +125,31 @@ public class Tetris extends View{
                         right = false;
                     }
 
-                    boolean gameOver = falling.Fall();
+                    int state = falling.Fall();
 
-                    if(gameOver){
+                    if(state == 1){
                         for(int i = 0; i < lx; i++){
                             for(int j = 0; j < ly; j++){
                                 matrix[i][j] = 0;
                             }
                         }
+                    } else if (state == 2) {
+                        down = false;
                     }
                 }else{
-                    ((MainActivity)context).setLevel(++level);
-                    ((MainActivity)context).setScore(++score);
+                    score += lines == 1 ? 40 * level + 40 : 0;
+                    score += lines == 2 ? 100 * level + 100 : 0;
+                    score += lines == 3 ? 300 * level + 300 : 0;
+                    score += lines == 4 ? 1200 * level + 1200 : 0;
+                    level++;
+                    myHandler.post(updateText);
                 }
                 //invalidate();
                 postInvalidate();
                 t = false;
+                div = 0;
             }
-        }, 0, 500);
+        }, 0, 50);
 
 
     }

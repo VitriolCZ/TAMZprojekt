@@ -13,18 +13,24 @@ public class Shape {
     private Point[] points = new Point[4];
     private int me;
     private int color;
+    private int startY;
 
-    public Shape(Point p1, Point p2, Point p3, Point p4, int me){
+    public Shape(Point p1, Point p2, Point p3, Point p4, int me, int startY){
         points[0] = p1;
         points[1] = p2;
         points[2] = p3;
         points[3] = p4;
         this.me = me;
+        this.startY = startY;
         getColor();
     }
 
     public Point[] Get(){
         return points;
+    }
+
+    public int GetStartY(){
+        return startY;
     }
 
     public void generateColor(){

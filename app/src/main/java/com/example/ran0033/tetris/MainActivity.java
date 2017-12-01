@@ -2,6 +2,7 @@ package com.example.ran0033.tetris;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -15,14 +16,17 @@ public class MainActivity extends Activity {
 
         tScore = findViewById(R.id.score);
         tLevel = findViewById(R.id.level);
+
+        setScore(0);
+        setLevel(0);
     }
 
     public void setScore(int score){
-        this.tScore.setText(score);
+        this.tScore.setText(Integer.toString(score));
     }
 
     public void setLevel(int level){
-        this.tLevel.setText(level);
+        this.tLevel.setText(Integer.toString(level));
     }
 
 
