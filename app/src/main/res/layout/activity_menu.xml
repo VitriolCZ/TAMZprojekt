@@ -30,12 +30,14 @@
             android:id="@+id/btnNickname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="btnSetNickname"
             android:text="Set nickname" />
 
         <Button
             android:id="@+id/btnStats"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:onClick="btnStatsOnClick"
             android:text="View stats" />
 
         <Button

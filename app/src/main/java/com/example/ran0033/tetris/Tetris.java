@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.media.SoundPool;
 import android.os.*;
 import android.os.Message;
 import android.util.AttributeSet;
@@ -37,6 +38,10 @@ public class Tetris extends View{
     private Falling falling;
 
     private Point touchStart;
+
+    private SoundPool sp;
+    private int sLvl;
+    private int sGover;
 
     private boolean up, down, right, left, pause;
     private int score, level, div, pauseTap;
@@ -85,11 +90,7 @@ public class Tetris extends View{
                 int state = falling.Fall();
 
                 if(state == 1){
-                    /*for(int i = 0; i < lx; i++){
-                        for(int j = 0; j < ly; j++){
-                            matrix[i][j] = 0;
-                        }
-                    }*/
+                    sp.play(sGover,1, 1, 1, 0, 1);
                     pause = true;
                     MenuActivity.gameOver.putExtra("level", level);
                     MenuActivity.gameOver.putExtra("score", score);
@@ -131,13 +132,20 @@ public class Tetris extends View{
             MainActivity ma = (MainActivity)context;
             ma.setLevel(level);
             ma.setScore(score);
+            sp.play(sLvl,1, 1, 1, 0, 1);
         }
     };
 
     void init(final Context context) {
         this.context = context;
+
+        sp = new SoundPool.Builder().build();
+        sLvl = sp.load(context, R.raw.winner, 1);
+        sGover = sp.load(context, R.raw.gameover, 1);
+
         falling = new Falling(matrix);
         timer = new Timer();
+
         timer.scheduleAtFixedRate(tetrisTask, 0, 50);
     }
 

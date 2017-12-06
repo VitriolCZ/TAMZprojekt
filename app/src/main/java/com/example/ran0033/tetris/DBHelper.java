@@ -11,6 +11,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by radosek on 8/12/2015.
@@ -51,15 +52,22 @@ public class DBHelper extends SQLiteOpenHelper{
     }
 
     //Cursor representuje vracena data
-    public ArrayList<String> getStats(){
+    public ArrayList<Entry> getStats(){
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor res =  db.rawQuery("select * from stats", null);
+        Cursor res =  db.rawQuery("select * from stats ORDER BY score DESC, level DESC", null);
         res.moveToFirst();
 
-        ArrayList<String> arrayList = new ArrayList<>();
+        ArrayList<Entry> arrayList = new ArrayList<>();
 
         while(res.isAfterLast() == false){
-            arrayList.add(res.getString(res.getColumnIndex("score")));
+            Entry e = new Entry();
+
+            e.nick = res.getString(res.getColumnIndex("nick"));
+            e.date = res.getString(res.getColumnIndex("date"));
+            e.level = res.getInt(res.getColumnIndex("level"));
+            e.score = res.getInt(res.getColumnIndex("score"));
+
+            arrayList.add(e);
             res.moveToNext();
         }
 

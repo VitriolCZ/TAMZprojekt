@@ -20,9 +20,7 @@ public class GameOverActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.textLevel)).setText(String.valueOf(extras.get("level")));
         ((TextView) findViewById(R.id.textScore)).setText(String.valueOf(extras.get("score")));
 
-        MenuActivity.dbStats.insertScore("Vitriol", extras.getInt("level"), extras.getInt("score"));
-
-        ArrayList<String> t = MenuActivity.dbStats.getStats();
+        MenuActivity.dbStats.insertScore(MenuActivity.nickname, extras.getInt("level"), extras.getInt("score"));
     }
 
     public void goMenuOnClick(View v){
