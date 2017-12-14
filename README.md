@@ -1,6 +1,4 @@
-# TAMZprojekt
-
-Implementace hry TETRIS pro Andriod
+# Implementace hry TETRIS pro Andriod
 Studentský projekt TAMZ 2 VŠB-TUO
 
 - pokročilé GUI - list, gesta
